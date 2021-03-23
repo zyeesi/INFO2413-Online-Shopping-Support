@@ -1,4 +1,6 @@
 import com.formdev.flatlaf.FlatDarkLaf;
+import java.awt.Cursor;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -16,11 +18,10 @@ public class Report extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        tablePanel = new javax.swing.JPanel();
+        testButton = new javax.swing.JButton();
+        mainTab = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         reportTable = new javax.swing.JTable();
-        navPanel = new javax.swing.JPanel();
-        testButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Online Shopping Support");
@@ -29,8 +30,17 @@ public class Report extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(800, 600));
         setResizable(false);
 
-        tablePanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        tablePanel.setFocusable(false);
+        testButton.setText("Test");
+        testButton.setFocusPainted(false);
+        testButton.setFocusable(false);
+        testButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                testButtonActionPerformed(evt);
+            }
+        });
+
+        mainTab.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        mainTab.setFocusable(false);
 
         reportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -55,7 +65,13 @@ public class Report extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        reportTable.setFocusable(false);
         reportTable.getTableHeader().setReorderingAllowed(false);
+        reportTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                enterTable(evt);
+            }
+        });
         reportTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 reportTableMouseClicked(evt);
@@ -70,51 +86,7 @@ public class Report extends javax.swing.JFrame {
             reportTable.getColumnModel().getColumn(4).setResizable(false);
         }
 
-        javax.swing.GroupLayout tablePanelLayout = new javax.swing.GroupLayout(tablePanel);
-        tablePanel.setLayout(tablePanelLayout);
-        tablePanelLayout.setHorizontalGroup(
-            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tablePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 772, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        tablePanelLayout.setVerticalGroup(
-            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tablePanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        navPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        navPanel.setFocusable(false);
-
-        testButton.setText("Test");
-        testButton.setFocusPainted(false);
-        testButton.setFocusable(false);
-        testButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                testButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout navPanelLayout = new javax.swing.GroupLayout(navPanel);
-        navPanel.setLayout(navPanelLayout);
-        navPanelLayout.setHorizontalGroup(
-            navPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(navPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(testButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        navPanelLayout.setVerticalGroup(
-            navPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, navPanelLayout.createSequentialGroup()
-                .addContainerGap(113, Short.MAX_VALUE)
-                .addComponent(testButton)
-                .addContainerGap())
-        );
+        mainTab.addTab("Orders", jScrollPane1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -123,17 +95,20 @@ public class Report extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(navPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(mainTab, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(testButton)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(navPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(160, 160, 160)
+                .addComponent(testButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(mainTab, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -152,9 +127,19 @@ public class Report extends javax.swing.JFrame {
         // click on each order will bring to Order form, currently a popup as a placeholder
         Object orderID = reportTable.getValueAt (reportTable.getSelectedRow(),0);
         // the 1 at the end is the inforamtion icon
-        JOptionPane.showMessageDialog(this, (Object)("Open order number: " + orderID), "Placeholder", 1);
+        JOptionPane.showMessageDialog(this, (Object)("Open order number: " + orderID), "Placeholder", JOptionPane.INFORMATION_MESSAGE);
         
     }//GEN-LAST:event_reportTableMouseClicked
+
+    private void enterTable(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_enterTable
+        final int x = evt.getX();
+        final int y = evt.getY();
+        
+        final Rectangle tableBounds = reportTable.getBounds();
+        if (tableBounds != null && tableBounds.contains(x,y)) {
+            reportTable.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        }
+    }//GEN-LAST:event_enterTable
 
     public static void main(String args[]) {
         //<editor-fold defaultstate="collapsed" desc="Look and feel setting">
@@ -175,9 +160,8 @@ public class Report extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPanel navPanel;
+    private javax.swing.JTabbedPane mainTab;
     private javax.swing.JTable reportTable;
-    private javax.swing.JPanel tablePanel;
     private javax.swing.JButton testButton;
     // End of variables declaration//GEN-END:variables
 }
