@@ -1,5 +1,0 @@
-TO DO LIST:
-login system
-add counter for total price
-New item button to insert new item
-Display items in a table for that order
