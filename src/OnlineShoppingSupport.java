@@ -261,12 +261,24 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     }//GEN-LAST:event_ordersButtonActionPerformed
 
     private void addOrderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addOrderButtonActionPerformed
-        DefaultTableModel rModel = (DefaultTableModel)reportTable.getModel();
-        Object[] mySQLData = {tempID, trackingNumText.getText(), Integer.parseInt(totalItemsText.getText()), Double.parseDouble(totalPriceText.getText()), false};
-        rModel.addRow(mySQLData);
-        orderIDText.setText(Integer.toString(++tempID));
-        CardLayout card = (CardLayout)mainPanel.getLayout();
-        card.show(mainPanel, "reportTablePanel");
+        String trackingNum = trackingNumText.getText();
+        if (trackingNum.equals("")){
+            JOptionPane.showMessageDialog(this,"Please enter a tracking number!", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            DefaultTableModel rModel = (DefaultTableModel)reportTable.getModel();
+            Object[] mySQLData = {tempID, trackingNumText.getText(), Integer.parseInt(totalItemsText.getText()), Double.parseDouble(totalPriceText.getText()), false};
+            rModel.addRow(mySQLData);
+
+            // Increase OrderID
+            orderIDText.setText(Integer.toString(++tempID));
+
+            // Clear field data
+            trackingNumText.setText("");
+
+            // Swap back to report table viewpoint
+            CardLayout card = (CardLayout)mainPanel.getLayout();
+            card.show(mainPanel, "reportTablePanel");
+        }
     }//GEN-LAST:event_addOrderButtonActionPerformed
 
     public static void main(String args[]) {
