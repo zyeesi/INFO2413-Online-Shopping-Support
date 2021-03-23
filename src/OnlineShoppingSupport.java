@@ -31,7 +31,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         trackingNumText = new javax.swing.JTextField();
         totalItemsText = new javax.swing.JTextField();
         totalPriceText = new javax.swing.JTextField();
-        testButton = new javax.swing.JButton();
+        addOrderButton = new javax.swing.JButton();
         newOrderButton = new javax.swing.JButton();
         ordersButton = new javax.swing.JButton();
 
@@ -99,7 +99,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
 
         jLabel4.setText("Total Price ($):");
 
-        orderIDText.setText("0");
+        orderIDText.setText(Integer.toString(tempID));
         orderIDText.setEnabled(false);
         orderIDText.setMaximumSize(new java.awt.Dimension(200, 22));
         orderIDText.setMinimumSize(new java.awt.Dimension(200, 22));
@@ -121,6 +121,16 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         totalPriceText.setMinimumSize(new java.awt.Dimension(200, 22));
         totalPriceText.setPreferredSize(new java.awt.Dimension(200, 22));
 
+        addOrderButton.setText("Add Order");
+        addOrderButton.setMaximumSize(new java.awt.Dimension(87, 22));
+        addOrderButton.setMinimumSize(new java.awt.Dimension(87, 22));
+        addOrderButton.setPreferredSize(new java.awt.Dimension(87, 22));
+        addOrderButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addOrderButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout newOrderPanelLayout = new javax.swing.GroupLayout(newOrderPanel);
         newOrderPanel.setLayout(newOrderPanelLayout);
         newOrderPanelLayout.setHorizontalGroup(
@@ -128,22 +138,27 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             .addGroup(newOrderPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(newOrderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4))
-                .addGap(18, 18, 18)
-                .addGroup(newOrderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(totalPriceText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(totalItemsText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(orderIDText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(trackingNumText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(newOrderPanelLayout.createSequentialGroup()
+                        .addGroup(newOrderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
+                        .addGap(32, 32, 32)
+                        .addGroup(newOrderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(totalItemsText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(trackingNumText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(orderIDText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(newOrderPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(18, 18, 18)
+                        .addComponent(totalPriceText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(addOrderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(479, Short.MAX_VALUE))
         );
         newOrderPanelLayout.setVerticalGroup(
             newOrderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(newOrderPanelLayout.createSequentialGroup()
-                .addGap(39, 39, 39)
+                .addGap(13, 13, 13)
                 .addGroup(newOrderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(orderIDText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -153,28 +168,18 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                     .addComponent(trackingNumText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(newOrderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(totalItemsText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
+                    .addComponent(jLabel3)
+                    .addComponent(totalItemsText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(newOrderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(totalPriceText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel4)
+                    .addComponent(totalPriceText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(addOrderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(254, Short.MAX_VALUE))
         );
 
         mainPanel.add(newOrderPanel, "newOrderPanel");
-
-        testButton.setText("Add Order");
-        testButton.setFocusPainted(false);
-        testButton.setFocusable(false);
-        testButton.setMaximumSize(new java.awt.Dimension(87, 22));
-        testButton.setMinimumSize(new java.awt.Dimension(87, 22));
-        testButton.setPreferredSize(new java.awt.Dimension(87, 22));
-        testButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                testButtonActionPerformed(evt);
-            }
-        });
 
         newOrderButton.setText("New Order");
         newOrderButton.setFocusPainted(false);
@@ -208,39 +213,25 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                         .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(ordersButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(newOrderButton))
-                            .addComponent(testButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(ordersButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(newOrderButton)
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(79, 79, 79)
-                .addComponent(testButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(107, 107, 107)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(newOrderButton)
                     .addComponent(ordersButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE)
+                .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void testButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testButtonActionPerformed
-        // placeholder data for data from mySQL
-        
-        DefaultTableModel rModel = (DefaultTableModel)reportTable.getModel();
-        Object[] mySQLData = {tempID, "FE80:0::1", 3, 46.34, true};
-        rModel.addRow(mySQLData);
-        tempID++;
-    }//GEN-LAST:event_testButtonActionPerformed
 
     private void reportTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reportTableMouseClicked
         // click on each order will bring to Order form, currently a popup as a placeholder
@@ -269,6 +260,15 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         card.show(mainPanel, "reportTablePanel");
     }//GEN-LAST:event_ordersButtonActionPerformed
 
+    private void addOrderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addOrderButtonActionPerformed
+        DefaultTableModel rModel = (DefaultTableModel)reportTable.getModel();
+        Object[] mySQLData = {tempID, trackingNumText.getText(), Integer.parseInt(totalItemsText.getText()), Double.parseDouble(totalPriceText.getText()), false};
+        rModel.addRow(mySQLData);
+        orderIDText.setText(Integer.toString(++tempID));
+        CardLayout card = (CardLayout)mainPanel.getLayout();
+        card.show(mainPanel, "reportTablePanel");
+    }//GEN-LAST:event_addOrderButtonActionPerformed
+
     public static void main(String args[]) {
         //<editor-fold defaultstate="collapsed" desc="Look and feel setting">
         try {
@@ -289,6 +289,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addOrderButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -300,7 +301,6 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private javax.swing.JButton ordersButton;
     private javax.swing.JScrollPane reporTableScrollPane;
     private javax.swing.JTable reportTable;
-    private javax.swing.JButton testButton;
     private javax.swing.JTextField totalItemsText;
     private javax.swing.JTextField totalPriceText;
     private javax.swing.JTextField trackingNumText;
