@@ -518,6 +518,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         itemIDText.setText("");
         addItemButton.setEnabled(false);
         addOrderButton.setEnabled(true);
+        confirmOrderButton.setEnabled(false);
         resetNewItemGUI();
     }
     
