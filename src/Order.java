@@ -35,7 +35,7 @@ public class Order {
     public Order (Order order){
         this.orderID = order.getID();
         this.trkNum = order.getTrkNum();
-        this.itemID = itemID++;
+        order.itemID++;
     }
     
     public void setTotalItems (int amount){

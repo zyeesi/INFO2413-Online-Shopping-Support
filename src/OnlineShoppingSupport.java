@@ -11,8 +11,7 @@ import javax.swing.table.DefaultTableModel;
 public class OnlineShoppingSupport extends javax.swing.JFrame {
 
     private static int tempID = 0;
-    HashMap<Integer, Order> orderHash = new HashMap<Integer, Order>();
-    
+    private HashMap<Integer, Order> orderHash = new HashMap<Integer, Order>();
     public OnlineShoppingSupport() {
         initComponents();
     }
@@ -44,6 +43,10 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         itemPriceText = new javax.swing.JTextField();
         itemNameText = new javax.swing.JTextField();
         itemIDText = new javax.swing.JTextField();
+        itemsInfoSplitPane = new javax.swing.JSplitPane();
+        itemsTableScrollPane = new javax.swing.JScrollPane();
+        itemsTable = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
         newOrderButton = new javax.swing.JButton();
         ordersButton = new javax.swing.JButton();
 
@@ -52,6 +55,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("icon.png")));
         setMaximumSize(new java.awt.Dimension(800, 600));
         setMinimumSize(new java.awt.Dimension(800, 600));
+        setPreferredSize(new java.awt.Dimension(800, 600));
         setResizable(false);
 
         mainPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -95,10 +99,15 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         reporTableScrollPane.setViewportView(reportTable);
         if (reportTable.getColumnModel().getColumnCount() > 0) {
             reportTable.getColumnModel().getColumn(0).setResizable(false);
+            reportTable.getColumnModel().getColumn(0).setPreferredWidth(25);
             reportTable.getColumnModel().getColumn(1).setResizable(false);
+            reportTable.getColumnModel().getColumn(1).setPreferredWidth(100);
             reportTable.getColumnModel().getColumn(2).setResizable(false);
+            reportTable.getColumnModel().getColumn(2).setPreferredWidth(25);
             reportTable.getColumnModel().getColumn(3).setResizable(false);
+            reportTable.getColumnModel().getColumn(3).setPreferredWidth(25);
             reportTable.getColumnModel().getColumn(4).setResizable(false);
+            reportTable.getColumnModel().getColumn(4).setPreferredWidth(25);
         }
 
         mainPanel.add(reporTableScrollPane, "reportTablePanel");
@@ -279,6 +288,62 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
 
         mainPanel.add(newOrderPanel, "newOrderPanel");
 
+        itemsInfoSplitPane.setDividerLocation(500);
+        itemsInfoSplitPane.setDividerSize(0);
+        itemsInfoSplitPane.setEnabled(false);
+
+        itemsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Name", "Quant", "Price"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class, java.lang.Double.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        itemsTable.setFocusable(false);
+        itemsTable.getTableHeader().setReorderingAllowed(false);
+        itemsTableScrollPane.setViewportView(itemsTable);
+        if (itemsTable.getColumnModel().getColumnCount() > 0) {
+            itemsTable.getColumnModel().getColumn(0).setResizable(false);
+            itemsTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+            itemsTable.getColumnModel().getColumn(1).setResizable(false);
+            itemsTable.getColumnModel().getColumn(1).setPreferredWidth(5);
+            itemsTable.getColumnModel().getColumn(2).setResizable(false);
+            itemsTable.getColumnModel().getColumn(2).setPreferredWidth(10);
+        }
+
+        itemsInfoSplitPane.setRightComponent(itemsTableScrollPane);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 500, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 449, Short.MAX_VALUE)
+        );
+
+        itemsInfoSplitPane.setLeftComponent(jPanel1);
+
+        mainPanel.add(itemsInfoSplitPane, "itemsTablePanel");
+
         newOrderButton.setText("New Order");
         newOrderButton.setFocusPainted(false);
         newOrderButton.setFocusable(false);
@@ -307,14 +372,13 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
+                    .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(ordersButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(newOrderButton)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -332,10 +396,10 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void reportTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reportTableMouseClicked
-        // click on each order will bring to Order form, currently a popup as a placeholder
         Object orderID = reportTable.getValueAt (reportTable.getSelectedRow(),0);
-        // the 1 at the end is the inforamtion icon
-        JOptionPane.showMessageDialog(this, (Object)("Open order number: " + orderID), "Placeholder", JOptionPane.INFORMATION_MESSAGE);
+        
+        CardLayout card = (CardLayout)mainPanel.getLayout();
+        card.show(mainPanel, "itemsTablePanel");
     }//GEN-LAST:event_reportTableMouseClicked
 
     private void reportTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reportTableMouseMoved
@@ -387,6 +451,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             
             setNewItemGUI();
             orderIDText.setText(Integer.toString(newOrder.getID()));
+            itemIDText.setText(Integer.toString(newOrder.getItemID()));
         }
     }//GEN-LAST:event_addOrderButtonActionPerformed
 
@@ -404,6 +469,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         // set GUI
         resetNewItemGUI();
         confirmOrderButton.setEnabled (true);
+        itemIDText.setText(Integer.toString(order.getItemID()));
         totalItemsText.setText(Integer.toString(order.getTotalItem()));
         totalPriceText.setText(Double.toString(order.getTotalPrice()));
     }//GEN-LAST:event_addItemButtonActionPerformed
@@ -449,6 +515,9 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         itemNameText.setEnabled(false);
         itemQuantityText.setEnabled(false);
         itemPriceText.setEnabled(false);
+        itemIDText.setText("");
+        addItemButton.setEnabled(false);
+        addOrderButton.setEnabled(true);
         resetNewItemGUI();
     }
     
@@ -461,6 +530,9 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private javax.swing.JTextField itemNameText;
     private javax.swing.JTextField itemPriceText;
     private javax.swing.JTextField itemQuantityText;
+    private javax.swing.JSplitPane itemsInfoSplitPane;
+    private javax.swing.JTable itemsTable;
+    private javax.swing.JScrollPane itemsTableScrollPane;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -469,6 +541,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JButton newOrderButton;
     private javax.swing.JPanel newOrderPanel;
