@@ -3,12 +3,14 @@ public class Order {
     private static int totalOrder = 0;
     private int orderID;
     private String trkNum;
+    private String orderComp;
     private int totalItem;
     private double totalPrice;
+    private boolean orderStatus;
     private int itemID;
     
     // newOrder with 0 items
-    public Order (String trackingNum){
+    public Order (String trackingNum, String orderCompany){
         /* pseduo code? 
         if (myDB){
             orderID = "
@@ -25,9 +27,11 @@ public class Order {
         
         this.orderID = totalOrder;
         this.trkNum = trackingNum;
+        this.orderComp = orderCompany;
         this.totalItem = 0;
         this.totalPrice = 0;
         this.itemID = 0;
+        this.orderStatus = false;
         totalOrder++;
     }
     
@@ -35,14 +39,16 @@ public class Order {
     public Order (Order order){
         this.orderID = order.getID();
         this.trkNum = order.getTrkNum();
+        this.orderComp = order.getOrderComp();
+        this.orderStatus = order.getStatus();
         order.itemID++;
     }
     
-    public void setTotalItems (int amount){
+    public void addToTotalItems (int amount){
         this.totalItem += amount;
     }
     
-    public void setTotalPrice (double amount){
+    public void addToTotalPrice (double amount){
         this.totalPrice += amount;
     }
     
@@ -54,11 +60,23 @@ public class Order {
         return this.trkNum;
     }
     
+    public String getOrderComp(){
+        return this.orderComp;
+    }
+    
     public int getTotalItem (){
         return this.totalItem;
     }
     public double getTotalPrice (){
         return this.totalPrice;
+    }
+    
+    public boolean getStatus (){
+        return this.orderStatus;
+    }
+    
+    public void setStatus (boolean bool){
+        this.orderStatus = bool;
     }
     
     public int getItemID (){
