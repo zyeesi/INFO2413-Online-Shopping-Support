@@ -1,3 +1,9 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.ResultSet;
+
 public class Order {
     
     private static int totalOrder = 0;
@@ -11,21 +17,27 @@ public class Order {
     
     // newOrder with 0 items
     public Order (String trackingNum, String orderCompany){
-        /* pseduo code? 
-        if (myDB){
-            orderID = "
-                SELECT 
-                    orderID 
-                FROM 
-                    Order 
-                WHERE trakNum = ( SELECT MAX(orderID) FROM Order)
-                ";
-        } else {
-            orderID = 0;
+        try {
+            Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+            Statement statement = con.createStatement();
+            
+            String sqlSelect = 
+                    "SELECT orderID FROM Orders ORDER BY orderID DESC LIMIT 0, 1;";
+            
+            ResultSet rs = statement.executeQuery(sqlSelect);
+            if (rs.next()){
+                this.orderID = rs.getInt("orderID") + 1;
+                totalOrder = rs.getInt("orderID") + 1;
+            } else {
+                this.orderID = totalOrder;
+            }
+            
+            statement.close();
+            con.close();
+        } catch (SQLException ex){
+            System.err.println(ex);
         }
-        */
         
-        this.orderID = totalOrder;
         this.trkNum = trackingNum;
         this.orderComp = orderCompany;
         this.totalItem = 0;
@@ -41,7 +53,6 @@ public class Order {
         this.trkNum = order.getTrkNum();
         this.orderComp = order.getOrderComp();
         this.orderStatus = order.getStatus();
-        order.itemID++;
     }
     
     public void addToTotalItems (int amount){
@@ -81,5 +92,9 @@ public class Order {
     
     public int getItemID (){
         return this.itemID;
+    }
+    
+    public void incItemID (Order order){
+        order.itemID++;
     }
 }
