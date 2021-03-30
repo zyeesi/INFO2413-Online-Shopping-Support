@@ -13,18 +13,18 @@ CREATE TABLE Orders (
 );
 
 CREATE TABLE Order_Items (
+    orderID INT NOT NULL,
     itemID INT NOT NULL,
     itemName VARCHAR(25) NOT NULL,
     itemPrice DECIMAL(10 , 2 ) NOT NULL,
     itemQuantity INT NOT NULL,
     itemDescription VARCHAR(225),
     itemStatus BOOL NOT NULL,
-    orderID INT NOT NULL,
     FOREIGN KEY (orderID)
 		REFERENCES Orders (orderID)
 		ON UPDATE CASCADE
         ON DELETE CASCADE,
-    PRIMARY KEY (itemID)
+    PRIMARY KEY (itemID, orderID)
 );
 
 DROP DATABASE OSSdb;

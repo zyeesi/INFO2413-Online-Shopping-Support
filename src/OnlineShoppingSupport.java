@@ -3,23 +3,41 @@ import java.awt.CardLayout;
 import java.awt.Cursor;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.util.HashMap; // delete later
+import java.util.HashMap;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 // MySQL Connector/j 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.text.DecimalFormat;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+
+/*      Disclaimer:  
+        I didn't put the mySQL query and some other stuff like switching cards into a method call
+        Honestly, it's because I got lazy at the start and got even lazier to fix it.
+        I wrote this by myself, and I'm assuming the rest of my group wouldn't 
+        be tempering with it. So I'm just gonna leave as such, but I can fix it,
+        if given the time.
+*/
 
 public class OnlineShoppingSupport extends javax.swing.JFrame {
 
+    // hashmaps to pass object and items easier
     private HashMap<Integer, Order> orderHash = new HashMap<Integer, Order>();
+    private HashMap<Integer, Item> itemHash = new HashMap<Integer, Item>();
+    
+    
+    
     public OnlineShoppingSupport() {
         initComponents();
+        // Load previous order data
+        loadOrderData();
     }
     
     @SuppressWarnings("unchecked")
@@ -57,13 +75,27 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         itemsInfoSplitPane = new javax.swing.JSplitPane();
         itemsTableScrollPane = new javax.swing.JScrollPane();
         itemsTable = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
+        itemsInfoPanel = new javax.swing.JPanel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        itemTabIDText = new javax.swing.JTextField();
+        itemTabNameText = new javax.swing.JTextField();
+        itemTabQuantText = new javax.swing.JTextField();
+        itemTabPriceText = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
+        itemDescDetailScrollPane = new javax.swing.JScrollPane();
+        itemDescDetailText = new javax.swing.JTextArea();
+        updateItemsButton = new javax.swing.JButton();
         newOrderButton = new javax.swing.JButton();
         ordersButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Online Shopping Support");
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("icon.png")));
+        setMaximumSize(new java.awt.Dimension(700, 500));
+        setMinimumSize(new java.awt.Dimension(700, 500));
         setPreferredSize(new java.awt.Dimension(700, 500));
         setResizable(false);
 
@@ -76,14 +108,14 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Tracking #", "Total Items", "Total Price", "Completed"
+                "ID", "Tracking #", "Order Company", "Total Items", "Total Price", "Order Date", "Completed"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -113,11 +145,15 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             reportTable.getColumnModel().getColumn(1).setResizable(false);
             reportTable.getColumnModel().getColumn(1).setPreferredWidth(100);
             reportTable.getColumnModel().getColumn(2).setResizable(false);
-            reportTable.getColumnModel().getColumn(2).setPreferredWidth(25);
+            reportTable.getColumnModel().getColumn(2).setPreferredWidth(75);
             reportTable.getColumnModel().getColumn(3).setResizable(false);
             reportTable.getColumnModel().getColumn(3).setPreferredWidth(25);
             reportTable.getColumnModel().getColumn(4).setResizable(false);
-            reportTable.getColumnModel().getColumn(4).setPreferredWidth(25);
+            reportTable.getColumnModel().getColumn(4).setPreferredWidth(50);
+            reportTable.getColumnModel().getColumn(5).setResizable(false);
+            reportTable.getColumnModel().getColumn(5).setPreferredWidth(25);
+            reportTable.getColumnModel().getColumn(6).setResizable(false);
+            reportTable.getColumnModel().getColumn(6).setPreferredWidth(25);
         }
 
         mainPanel.add(reporTableScrollPane, "reportTablePanel");
@@ -328,12 +364,12 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                             .addComponent(addItemButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(confirmOrderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         mainPanel.add(newOrderPanel, "newOrderPanel");
 
-        itemsInfoSplitPane.setDividerLocation(400);
+        itemsInfoSplitPane.setDividerLocation(350);
         itemsInfoSplitPane.setDividerSize(0);
         itemsInfoSplitPane.setEnabled(false);
 
@@ -342,14 +378,14 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Name", "Quant", "Price"
+                "ID", "Name", "Quant", "Price", "Received"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -362,30 +398,121 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         });
         itemsTable.setFocusable(false);
         itemsTable.getTableHeader().setReorderingAllowed(false);
+        itemsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                itemsTableMouseMoved(evt);
+            }
+        });
+        itemsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                itemsTableMouseClicked(evt);
+            }
+        });
         itemsTableScrollPane.setViewportView(itemsTable);
         if (itemsTable.getColumnModel().getColumnCount() > 0) {
             itemsTable.getColumnModel().getColumn(0).setResizable(false);
-            itemsTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+            itemsTable.getColumnModel().getColumn(0).setPreferredWidth(1);
             itemsTable.getColumnModel().getColumn(1).setResizable(false);
-            itemsTable.getColumnModel().getColumn(1).setPreferredWidth(5);
+            itemsTable.getColumnModel().getColumn(1).setPreferredWidth(50);
             itemsTable.getColumnModel().getColumn(2).setResizable(false);
-            itemsTable.getColumnModel().getColumn(2).setPreferredWidth(10);
+            itemsTable.getColumnModel().getColumn(2).setPreferredWidth(5);
+            itemsTable.getColumnModel().getColumn(3).setResizable(false);
+            itemsTable.getColumnModel().getColumn(3).setPreferredWidth(25);
+            itemsTable.getColumnModel().getColumn(4).setResizable(false);
+            itemsTable.getColumnModel().getColumn(4).setPreferredWidth(5);
         }
 
         itemsInfoSplitPane.setRightComponent(itemsTableScrollPane);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+        jLabel11.setText("Item ID:");
+
+        jLabel12.setText("Item Quantity:");
+
+        jLabel13.setText("Item Price ($):");
+
+        jLabel15.setText("Item Name:");
+
+        itemTabIDText.setEnabled(false);
+        itemTabIDText.setPreferredSize(new java.awt.Dimension(232, 22));
+
+        itemTabNameText.setPreferredSize(new java.awt.Dimension(232, 22));
+
+        itemTabQuantText.setMinimumSize(new java.awt.Dimension(200, 22));
+        itemTabQuantText.setPreferredSize(new java.awt.Dimension(232, 22));
+
+        itemTabPriceText.setPreferredSize(new java.awt.Dimension(232, 22));
+
+        jLabel14.setText("Item Description:");
+
+        itemDescDetailText.setColumns(20);
+        itemDescDetailText.setLineWrap(true);
+        itemDescDetailText.setRows(5);
+        itemDescDetailScrollPane.setViewportView(itemDescDetailText);
+
+        updateItemsButton.setText("Update");
+        updateItemsButton.setEnabled(false);
+        updateItemsButton.setFocusPainted(false);
+        updateItemsButton.setFocusable(false);
+        updateItemsButton.setPreferredSize(new java.awt.Dimension(87, 22));
+        updateItemsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateItemsButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout itemsInfoPanelLayout = new javax.swing.GroupLayout(itemsInfoPanel);
+        itemsInfoPanel.setLayout(itemsInfoPanelLayout);
+        itemsInfoPanelLayout.setHorizontalGroup(
+            itemsInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(itemsInfoPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(itemsInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(itemsInfoPanelLayout.createSequentialGroup()
+                        .addGroup(itemsInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel14)
+                            .addComponent(jLabel13)
+                            .addComponent(jLabel12)
+                            .addComponent(jLabel15)
+                            .addComponent(jLabel11))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(itemsInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(itemTabIDText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(itemDescDetailScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(itemTabPriceText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(itemTabQuantText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(itemTabNameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(updateItemsButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 14, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 296, Short.MAX_VALUE)
+        itemsInfoPanelLayout.setVerticalGroup(
+            itemsInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(itemsInfoPanelLayout.createSequentialGroup()
+                .addGap(13, 13, 13)
+                .addGroup(itemsInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(itemTabIDText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(itemsInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(itemTabNameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel15))
+                .addGap(18, 18, 18)
+                .addGroup(itemsInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(itemTabQuantText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12))
+                .addGap(18, 18, 18)
+                .addGroup(itemsInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(itemTabPriceText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(itemsInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(itemDescDetailScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addComponent(updateItemsButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
-        itemsInfoSplitPane.setLeftComponent(jPanel1);
+        itemsInfoSplitPane.setLeftComponent(itemsInfoPanel);
 
         mainPanel.add(itemsInfoSplitPane, "itemsTablePanel");
 
@@ -433,7 +560,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                     .addComponent(newOrderButton)
                     .addComponent(ordersButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -442,10 +569,14 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     
     
     private void reportTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reportTableMouseClicked
-        Object orderID = reportTable.getValueAt (reportTable.getSelectedRow(),0);
+        Object order = reportTable.getValueAt (reportTable.getSelectedRow(),0);
+        int orderID = order != null ? Integer.parseInt(order.toString()) : -1;
         
-        CardLayout card = (CardLayout)mainPanel.getLayout();
-        card.show(mainPanel, "itemsTablePanel");
+        if (orderID >= 0){
+            setItemsTable(orderID);
+            CardLayout card = (CardLayout)mainPanel.getLayout();
+            card.show(mainPanel, "itemsTablePanel");
+        }
     }//GEN-LAST:event_reportTableMouseClicked
 
     private void reportTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reportTableMouseMoved
@@ -455,6 +586,8 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         final Rectangle tableBounds = reportTable.getBounds();
         if (tableBounds != null && tableBounds.contains(x,y)) {
             reportTable.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        } else {
+            reportTable.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_reportTableMouseMoved
 
@@ -476,9 +609,10 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         // grab table model
         DefaultTableModel rModel = (DefaultTableModel)reportTable.getModel();
         // set data
-        Object[] mySQLData = {order.getID(), order.getTrkNum(), order.getTotalItem(), order.getTotalPrice(), false};
-        rModel.addRow(mySQLData);
-        
+        String totPrice = new DecimalFormat("$#,###.00").format(order.getTotalPrice());
+        Object[] orderData = {order.getOrderID(), order.getTrkNum(), order.getOrderComp(), order.getTotalItem(), totPrice, order.getOrderDate(), order.getStatus()};
+        rModel.addRow(orderData);
+     
         resetNewOrderGUI();
 
         // Swap back to report table viewpoint
@@ -504,7 +638,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 String sqlInsert = 
                         "INSERT INTO Orders" +
                         "(orderID, trackingNum, orderDate, orderPrice, orderTotalItems, orderCompany, orderStatus)" +
-                        "VALUES (" + newOrder.getID() + ", '" + newOrder.getTrkNum() + "', '" + getCurrentDate() + "', " + 
+                        "VALUES (" + newOrder.getOrderID() + ", '" + newOrder.getTrkNum() + "', '" + newOrder.getOrderDate() + "', " + 
                         newOrder.getTotalPrice() + ", " + newOrder.getTotalItem() + ", '" + newOrder.getOrderComp() + 
                         "', " + newOrder.getStatus() + ");";
                
@@ -514,10 +648,10 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 con.close();
                 
                 // using hashmap to grab the right object faster
-                orderHash.put(newOrder.getID(), newOrder);
+                orderHash.put(newOrder.getOrderID(), newOrder);
 
                 setNewItemGUI();
-                orderIDText.setText(Integer.toString(newOrder.getID()));
+                orderIDText.setText(Integer.toString(newOrder.getOrderID()));
                 itemIDText.setText(Integer.toString(newOrder.getItemID()));
                 
             } catch (SQLException ex){
@@ -546,7 +680,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 String sqlInsertItem = 
                         "INSERT INTO Order_Items" +
                         "(orderID, itemID, itemName, itemPrice, itemQuantity, itemDescription, itemStatus)" +
-                        "VALUES (" + order.getID() + ", " + newItem.getID() + ", '" + newItem.getName() + "', " + 
+                        "VALUES (" + order.getOrderID() + ", " + newItem.getID() + ", '" + newItem.getName() + "', " + 
                         newItem.getPrice() + ", " + newItem.getQuantity() + ", '" + newItem.getDesc() + "', " + newItem.getItemStatus() + ");";
                
                 statement.addBatch(sqlInsertItem);
@@ -555,7 +689,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 String sqlUpdateObject = 
                         "UPDATE Orders " + 
                         "SET orderPrice = " + order.getTotalPrice() + ", orderTotalItems = " + order.getTotalItem() +
-                        " WHERE orderID = " + order.getID() + ";";
+                        " WHERE orderID = " + order.getOrderID() + ";";
                 
                 statement.addBatch(sqlUpdateObject);
                 statement.executeBatch();
@@ -564,14 +698,14 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 con.close();
                 
                 // testing stuff delete after
-                orderHash.put(order.getID(), order);
+                orderHash.put(order.getOrderID(), order);
 
                 // set GUI
                 resetNewItemGUI();
                 confirmOrderButton.setEnabled (true);
                 itemIDText.setText(Integer.toString(order.getItemID()));
                 totalItemsText.setText(Integer.toString(order.getTotalItem()));
-                totalPriceText.setText(Double.toString(order.getTotalPrice()));
+                totalPriceText.setText(new DecimalFormat("$#,###.00").format(order.getTotalPrice()));
                 
             } catch (SQLException ex){
                 System.err.println(ex);
@@ -579,6 +713,100 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_addItemButtonActionPerformed
+
+    private void itemsTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_itemsTableMouseMoved
+        final int x = evt.getX();
+        final int y = evt.getY();
+        
+        final Rectangle tableBounds = itemsTable.getBounds();
+        if (tableBounds != null && tableBounds.contains(x,y)) {
+            itemsTable.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        }
+    }//GEN-LAST:event_itemsTableMouseMoved
+
+    private void itemsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_itemsTableMouseClicked
+        Object itemObj = itemsTable.getValueAt (itemsTable.getSelectedRow(),0);
+        int itemID = itemObj != null ? Integer.parseInt(itemObj.toString()) : -1;
+        
+        if (itemID >= 0){
+            Item item = itemHash.get(itemID);
+            itemTabIDText.setText(Integer.toString(item.getID()));
+            itemTabNameText.setText(item.getName());
+            itemTabQuantText.setText(Integer.toString(item.getQuantity()));
+            itemTabPriceText.setText(new DecimalFormat("$#,###.00").format(item.getPrice()));
+            itemDescDetailText.setText(item.getDesc());
+            
+            updateItemsButton.setEnabled(true);
+        }
+    }//GEN-LAST:event_itemsTableMouseClicked
+
+    private void updateItemsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateItemsButtonActionPerformed
+        int itemID = Integer.parseInt(itemTabIDText.getText());
+        if (checkUpdateError()){
+            Item item = itemHash.get(itemID);
+            item.setName(itemTabNameText.getText());
+            item.setQuantity(Integer.parseInt(itemTabQuantText.getText()));
+            // Converting makes everything annoying to deal with.
+            String compPrice = new DecimalFormat("$#,###.00").format(item.getPrice());
+            if (!itemTabPriceText.getText().equals(compPrice)){
+                item.setPrice(Double.parseDouble(itemTabPriceText.getText()));
+            }
+            item.setDesc(itemDescDetailText.getText());
+            
+            
+            int totalItem = 0;
+            double totalPrice = 0.0;
+            try {
+                int rows = itemsTable.getRowCount() - 1;
+                for (; rows >= 0; rows--){
+                    Object itemObj = itemsTable.getValueAt(rows, 0);
+                    // this is in case where the ItemID doesn't start with 0-n or skips etc
+                    int tableItemID = Integer.parseInt(itemObj.toString());
+                    Item ordItem = itemHash.get(tableItemID);
+                    totalItem += ordItem.getQuantity();
+                    totalPrice += ordItem.getPrice();
+                }
+            } catch (Exception ex) {
+                System.err.println(ex);
+            }
+            
+            try {
+                Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+                Statement statement = con.createStatement();
+                
+                // Update Object data
+                String sqlUpdateItem = 
+                        "UPDATE Order_Items " + 
+                        "SET itemName = '" + item.getName() + "', itemPrice = " + item.getPrice() + ", itemQuantity = " +
+                        item.getQuantity() + ", itemDescription = '" + item.getDesc() + "' " +
+                        "WHERE itemID = " + item.getID() + " AND orderID = " + item.getOrderID() + ";";
+                
+                statement.addBatch(sqlUpdateItem);
+                
+                // Update Object data
+                String sqlUpdateOrder = 
+                    "UPDATE Orders " + 
+                    "SET orderPrice = " + totalPrice + ", orderTotalItems = " + totalItem +
+                    " WHERE orderID = " + item.getOrderID() + ";";
+                statement.addBatch(sqlUpdateOrder);
+                statement.executeBatch();
+
+            statement.executeUpdate(sqlUpdateOrder);
+                
+                statement.close();
+                con.close();
+                
+            } catch (SQLException ex){
+                System.err.println(ex);
+            }
+            
+            setItemsTable(item.getOrderID());
+            loadOrderData();
+            
+            CardLayout card = (CardLayout)mainPanel.getLayout();
+            card.show(mainPanel, "reportTablePanel");
+        }
+    }//GEN-LAST:event_updateItemsButtonActionPerformed
 
     
     public static void main(String args[]) {
@@ -603,7 +831,136 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         } catch (Exception e) {
             System.err.println(e);
         }
+    }
+    
+    private void loadOrderData(){
+         // grab table model
+        DefaultTableModel rModel = (DefaultTableModel)reportTable.getModel();
+        // remove previous data
+        int previousRows = rModel.getRowCount();
+        if (previousRows > 0){
+            for (int i = previousRows - 1; i >= 0; i--){
+                rModel.removeRow(i);
+            }
+        }
         
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+        reportTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        reportTable.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        reportTable.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+        reportTable.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
+        
+        try {
+            // getting connection
+            Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+            
+            // setting statement query
+            Statement statement = con.createStatement();
+            String sqlSelect = 
+                    "SELECT * FROM Orders;";
+            
+            ResultSet rs = statement.executeQuery(sqlSelect);
+            while (rs.next()){
+                int orderID = rs.getInt("orderID");
+                String trkNum = rs.getString("trackingNum");
+                String orderComp = rs.getString("orderCompany");
+                int totItem = rs.getInt("orderTotalItems");
+                String totPrice = new DecimalFormat("$#,###.00").format(rs.getDouble("orderPrice"));
+                String orderDate = rs.getString("orderDate");
+                boolean orderStatus = rs.getBoolean("orderStatus");
+                
+                Object[] mySQLOrders = {orderID, trkNum, orderComp, totItem, totPrice, orderDate, orderStatus};
+                rModel.addRow(mySQLOrders);
+            }
+            
+            // closing connections
+            statement.close();
+            con.close();
+        } catch (SQLException ex){
+            System.err.println(ex);
+        }
+    }
+    
+    private void setItemsTable(int orderID){
+        DefaultTableModel iModel = (DefaultTableModel)itemsTable.getModel();
+        
+        // remove previous data
+        int previousRows = iModel.getRowCount();
+        if (previousRows > 0){
+            for (int i = previousRows - 1; i >= 0; i--){
+                iModel.removeRow(i);
+            }
+        }
+        resetItemData();
+        
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+        itemsTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        itemsTable.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+        itemsTable.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        
+        try {
+            // getting connection
+            Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+            
+            // setting statement query
+            Statement statement = con.createStatement();
+            
+            /* Getting maxItemAmount
+            int maxItemAmount;
+            String sqlItemAmount = 
+                    "SELECT COUNT(*) FROM Order_Items WHERE orderID = " + orderID + ";";
+            ResultSet itemAmountRS = statement.executeQuery(sqlItemAmount);
+            if (itemAmountRS.next()){
+                maxItemAmount = itemAmountRS.getInt("COUNT(*)");
+                System.out.println(maxItemAmount);
+            } 
+            */
+            
+            // grabbing item data
+            String sqlItemSelect = 
+                    "SELECT * FROM Order_Items WHERE orderID = " + orderID + ";";
+            
+            ResultSet itemsRS = statement.executeQuery(sqlItemSelect);
+            while (itemsRS.next()){
+                
+                int itemID = itemsRS.getInt("itemID");
+                String itemName = itemsRS.getString("itemName");
+                String itemPriceFormat = new DecimalFormat("$#,###.00").format(itemsRS.getDouble("itemPrice"));
+                double itemPrice = itemsRS.getDouble("itemPrice");
+                int itemQuant = itemsRS.getInt("itemQuantity");
+                String itemDesc = itemsRS.getString(("itemDescription"));
+                boolean itemStatus = itemsRS.getBoolean("itemStatus");
+                
+                Item item = new Item(orderID, itemID, itemName, itemPrice, itemQuant, itemDesc, itemStatus);
+                itemHash.put(item.getID(), item);
+                
+                Object[] mySQLItems = {item.getID(), item.getName(), item.getQuantity(), itemPriceFormat, item.getItemStatus()};
+                iModel.addRow(mySQLItems);
+            }
+            
+            /*
+            String sqlOrderSelect = 
+                    "SELECT * FROM Orders WHERE orderID = " + orderID + ";";
+            
+            ResultSet orderRS = statement.executeQuery(sqlOrderSelect);
+            if (orderRS.next()){
+                itemOrderItemsText.setText(Integer.toString(orderRS.getInt("orderTotalItems")));
+                itemOrderPriceText.setText(new DecimalFormat("$#,###.00").format(orderRS.getDouble("orderPrice")));
+            }
+            */
+            
+            // closing connections
+            statement.close();
+            con.close();
+        } catch (SQLException ex){
+            System.err.println(ex);
+        }
     }
     
     private void setNewItemGUI (){
@@ -642,19 +999,70 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         resetNewItemGUI();
     }
     
-    private String getCurrentDate(){
-        Date now = new Date();
-        String pattern = "yyyy-MM-dd";
-        SimpleDateFormat formatter = new SimpleDateFormat (pattern);
-        return formatter.format(now);
+    private void resetItemData (){
+        itemTabIDText.setEnabled(false);
+        itemTabIDText.setText("");
+        itemTabNameText.setText("");
+        itemTabQuantText.setText("");
+        itemTabPriceText.setText("");
+        itemDescDetailText.setText("");
+        updateItemsButton.setEnabled(false);
     }
-    
+    /* I don't wanna rewrite this
+    private void updateOrderPrices(int orderID){
+        int totalAmount = (int)getTValueTotal(itemsTable, 2);
+        double totalPrice = getTValueTotal(itemsTable, 3);
+
+        try {
+            Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+            Statement statement = con.createStatement();
+
+            // Update Object data
+            String sqlUpdateOrder = 
+                    "UPDATE Orders " + 
+                    "SET orderPrice = " + totalPrice + ", orderTotalItems = " + totalAmount +
+                    " WHERE orderID = " + orderID + ";";
+
+            statement.executeUpdate(sqlUpdateOrder);
+
+            statement.close();
+            con.close();
+
+        } catch (SQLException ex){
+            System.err.println(ex);
+            resetNewOrderGUI();
+        }
+    }
+    */
+
     private boolean checkItemError(){
         try {
             int itemQuant = Integer.parseInt(itemQuantityText.getText());
             double itemPrice = Double.parseDouble(itemPriceText.getText());
             return true;
         } catch (Exception ex) {
+            System.err.println(ex);
+            JOptionPane.showMessageDialog(this,"Please enter all required fields!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    }
+    
+    private boolean checkUpdateError(){
+        Item item = itemHash.get(Integer.parseInt(itemTabIDText.getText()));
+        try {
+            int itemQuant = Integer.parseInt(itemTabQuantText.getText());
+            String setPrice = new DecimalFormat("$#,###.00").format(item.getPrice());
+            if (!itemTabPriceText.getText().equals(setPrice)){
+                double itemPrice = Double.parseDouble(itemTabPriceText.getText());
+            }
+            if (itemTabNameText.getText().equals("")){
+                System.err.println("empty String");
+                JOptionPane.showMessageDialog(this,"Please enter all required fields!", "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            return true;
+        }catch (Exception ex){
+            JOptionPane.showMessageDialog(this,"Please enter all required fields with valid value!", "Error", JOptionPane.ERROR_MESSAGE);
             System.err.println(ex);
             return false;
         }
@@ -663,17 +1071,29 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private javax.swing.JButton addItemButton;
     private javax.swing.JButton addOrderButton;
     private javax.swing.JButton confirmOrderButton;
+    private javax.swing.JScrollPane itemDescDetailScrollPane;
+    private javax.swing.JTextArea itemDescDetailText;
     private javax.swing.JScrollPane itemDescScrollPane;
     private javax.swing.JTextArea itemDescText;
     private javax.swing.JTextField itemIDText;
     private javax.swing.JTextField itemNameText;
     private javax.swing.JTextField itemPriceText;
     private javax.swing.JTextField itemQuantityText;
+    private javax.swing.JTextField itemTabIDText;
+    private javax.swing.JTextField itemTabNameText;
+    private javax.swing.JTextField itemTabPriceText;
+    private javax.swing.JTextField itemTabQuantText;
+    private javax.swing.JPanel itemsInfoPanel;
     private javax.swing.JSplitPane itemsInfoSplitPane;
     private javax.swing.JTable itemsTable;
     private javax.swing.JScrollPane itemsTableScrollPane;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -682,7 +1102,6 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JButton newOrderButton;
     private javax.swing.JPanel newOrderPanel;
@@ -694,5 +1113,6 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private javax.swing.JTextField totalItemsText;
     private javax.swing.JTextField totalPriceText;
     private javax.swing.JTextField trackingNumText;
+    private javax.swing.JButton updateItemsButton;
     // End of variables declaration//GEN-END:variables
 }

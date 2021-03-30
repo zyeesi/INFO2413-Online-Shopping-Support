@@ -3,6 +3,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 public class Order {
     
@@ -11,6 +14,7 @@ public class Order {
     private String trkNum;
     private String orderComp;
     private int totalItem;
+    private String orderDate;
     private double totalPrice;
     private boolean orderStatus;
     private int itemID;
@@ -43,16 +47,46 @@ public class Order {
         this.totalItem = 0;
         this.totalPrice = 0;
         this.itemID = 0;
+        this.orderDate = getCurrentDate();
         this.orderStatus = false;
         totalOrder++;
     }
     
     // existing order
     public Order (Order order){
-        this.orderID = order.getID();
+        this.orderID = order.getOrderID();
         this.trkNum = order.getTrkNum();
         this.orderComp = order.getOrderComp();
+        this.orderDate = order.getOrderDate();
         this.orderStatus = order.getStatus();
+    }
+    
+    /* loading order 
+    public Order (int ordID, String trackNum, String ordComp, int totNum, String ordDate, double totPrice, boolean ordStatus, int itemsID){
+        this.orderID = ordID;
+        this.trkNum = trackNum;
+        this.orderComp = ordComp;
+        this.totalItem = totNum;
+        this.totalPrice = totPrice;
+        this.orderDate = ordDate;
+        this.orderStatus = ordStatus;
+        this.itemID = itemsID;
+    }
+    */
+    
+    public Order (int ordID){
+        this.orderID = ordID;
+    }
+    
+    private String getCurrentDate(){
+        Date now = new Date();
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat formatter = new SimpleDateFormat (pattern);
+        return formatter.format(now);
+    }
+    
+    public String getOrderDate(){
+        return this.orderDate;
     }
     
     public void addToTotalItems (int amount){
@@ -63,7 +97,7 @@ public class Order {
         this.totalPrice += amount;
     }
     
-    public int getID (){
+    public int getOrderID (){
         return this.orderID;
     }
     
