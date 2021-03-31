@@ -627,6 +627,9 @@
                     <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="itemsTableMouseMoved"/>
                     <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="itemsTableMouseClicked"/>
                   </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="// Rather painful to find this place with netbean&apos;s code protection&#xa;itemsTable.getModel().addTableModelListener(new TableModelListener() {&#xa;    public void tableChanged(TableModelEvent evt) {&#xa;         itemsTableValueChanged(evt);&#xa;    }&#xa;});"/>
+                  </AuxValues>
                 </Component>
               </SubComponents>
             </Container>
@@ -642,31 +645,27 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel13" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel12" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel15" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel11" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="newItemsButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="updateItemsButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Group type="102" attributes="0">
-                                  <Component id="updateItemsButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
-                                  <Component id="newItemsButton" min="-2" max="-2" attributes="0"/>
+                                  <Component id="deleteItemsButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="newItemsButton1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="completeOrderButton" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Group type="102" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel13" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel12" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel15" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel11" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="itemTabIDText" min="-2" max="-2" attributes="0"/>
-                                      <Component id="itemTabPriceText" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="itemTabQuantText" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="itemTabNameText" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="itemDescDetailScrollPane" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
+                              <Component id="itemTabIDText" min="-2" max="-2" attributes="0"/>
+                              <Component id="itemTabPriceText" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="itemTabQuantText" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="itemTabNameText" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="itemDescDetailScrollPane" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="14" max="32767" attributes="0"/>
                       </Group>
@@ -697,16 +696,18 @@
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="newItemsButton" min="-2" max="-2" attributes="0"/>
+                              </Group>
                               <Component id="itemDescDetailScrollPane" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="newItemsButton1" min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="newItemsButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="updateItemsButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="deleteItemsButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="completeOrderButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="updateItemsButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
@@ -790,7 +791,6 @@
                 <Component class="javax.swing.JButton" name="updateItemsButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Update"/>
-                    <Property name="enabled" type="boolean" value="false"/>
                     <Property name="focusPainted" type="boolean" value="false"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -814,7 +814,7 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newItemsButtonActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JButton" name="newItemsButton1">
+                <Component class="javax.swing.JButton" name="deleteItemsButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Delete"/>
                     <Property name="focusPainted" type="boolean" value="false"/>
@@ -824,7 +824,20 @@
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newItemsButton1ActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteItemsButtonActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="completeOrderButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Complete"/>
+                    <Property name="focusPainted" type="boolean" value="false"/>
+                    <Property name="focusable" type="boolean" value="false"/>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[87, 22]"/>
+                    </Property>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="completeOrderButtonActionPerformed"/>
                   </Events>
                 </Component>
               </SubComponents>
