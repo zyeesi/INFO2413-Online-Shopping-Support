@@ -820,7 +820,10 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     }
     
     private void updateItemsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateItemsButtonActionPerformed
-        if (itemTabIDText.getText().equals("")) return;
+        if (itemTabIDText.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Please select or create a new item first!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         int itemID = Integer.parseInt(itemTabIDText.getText());
         if (checkUpdateError()){
             Item item = itemHash.get(itemID);
@@ -1053,7 +1056,9 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             setItemsTable(item.getOrderID());
             loadOrderData();
             // delete object
+            int tempID = item.getID();
             item = null;
+            itemHash.put(tempID, item);
         }
     }//GEN-LAST:event_deleteItemsButtonActionPerformed
 
