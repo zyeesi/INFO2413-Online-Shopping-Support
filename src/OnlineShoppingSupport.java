@@ -33,6 +33,11 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private HashMap<Integer, Order> orderHash = new HashMap<Integer, Order>();
     private HashMap<Integer, Item> itemHash = new HashMap<Integer, Item>();
     private int curOrder;
+    
+    private boolean[] canEdit = new boolean [] {
+        false, false, false, false, true
+    };
+    
     public OnlineShoppingSupport() {
         initComponents();
         // Load previous order data
@@ -387,9 +392,6 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         ) {
             Class[] types = new Class [] {
                 java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -806,7 +808,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                         "SET itemStatus = " + checked +
                         " WHERE itemID = " + item.getID() + " AND orderID = " + item.getOrderID() + ";";
                 statement.executeUpdate(sqlUpdateItem);
-
+                
                 item.setStatus(checked);
                 statement.close();
                 con.close();
@@ -1312,6 +1314,11 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         newItemsButton.setEnabled(true);
         deleteItemsButton.setEnabled(true);
         completeOrderButton.setEnabled(true);
+        if (canEdit[4] == false){
+            canEdit[4] = true;
+            DefaultTableModel iModel = (DefaultTableModel)itemsTable.getModel();
+            iModel.fireTableStructureChanged();
+        }
     }
     
     private void lockAllItemData () {
@@ -1323,6 +1330,9 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         newItemsButton.setEnabled(false);
         deleteItemsButton.setEnabled(false);
         completeOrderButton.setEnabled(false);
+        canEdit[4] = false;
+        DefaultTableModel iModel = (DefaultTableModel)itemsTable.getModel();
+        iModel.fireTableStructureChanged();
     }
     
     /* I don't wanna rewrite this
