@@ -17,7 +17,7 @@ public class Order {
     private String orderDate;
     private double totalPrice;
     private boolean orderStatus;
-    private int itemID;
+    private int itemID; // key
     
     // newOrder with 0 items
     public Order (String trackingNum, String orderCompany){
