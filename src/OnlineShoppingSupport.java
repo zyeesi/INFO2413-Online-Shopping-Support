@@ -32,6 +32,9 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     // hashmaps to pass object and items easier
     private HashMap<Integer, Order> orderHash = new HashMap<Integer, Order>();
     private HashMap<Integer, Item> itemHash = new HashMap<Integer, Item>();
+    
+    private final static String ROOT_PASSWORD = "Root!420";
+    
     private int curOrder;
     
     private boolean[] canEdit = new boolean [] {
@@ -682,7 +685,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             
             // Add into mySQL table
             try {
-                Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+                Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
                 Statement statement = con.createStatement();
                 
                 // Insert data into order table
@@ -724,7 +727,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
 
             // add to mysql database
             try {
-                Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+                Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
                 Statement statement = con.createStatement();
                 
                 // Insert data into item Table
@@ -799,7 +802,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             Item item = itemHash.get(Integer.parseInt(itemObj.toString()));
             
             try {
-                Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+                Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
                 Statement statement = con.createStatement();
 
                 // Update Object data
@@ -857,7 +860,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 }
 
                 try {
-                    Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+                    Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
                     Statement statement = con.createStatement();
 
                     // Update Object data
@@ -922,7 +925,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 }
                 
                 try {
-                    Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+                    Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
                     Statement statement = con.createStatement();
 
                     // Insert new item data into item Table
@@ -980,7 +983,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         if (rowTotal == 0){
             // Delete Order
             try {
-                    Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+                    Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
                     Statement statement = con.createStatement();
 
                     // Delete order
@@ -1030,7 +1033,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             }
             
             try {
-                    Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+                    Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
                     Statement statement = con.createStatement();
 
                     // Delete based on itemID
@@ -1079,7 +1082,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         }
 
         try {
-            Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+            Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
             Statement statement = con.createStatement();
 
             // Update Object data
@@ -1147,7 +1150,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         
         try {
             // getting connection
-            Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+            Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
             
             // setting statement query
             Statement statement = con.createStatement();
@@ -1199,7 +1202,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         
         try {
             // getting connection
-            Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+            Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
             
             // setting statement query
             Statement statement = con.createStatement();
@@ -1346,7 +1349,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         double totalPrice = getTValueTotal(itemsTable, 3);
 
         try {
-            Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+            Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
             Statement statement = con.createStatement();
 
             // Update Object data
