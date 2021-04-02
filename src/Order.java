@@ -19,10 +19,12 @@ public class Order {
     private boolean orderStatus;
     private int itemID; // key
     
+    private final static String ROOT_PASSWORD = "Root!420";
+    
     // newOrder with 0 items
     public Order (String trackingNum, String orderCompany){
         try {
-            Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", "Root!420");
+            Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
             Statement statement = con.createStatement();
             
             String sqlSelect = 
