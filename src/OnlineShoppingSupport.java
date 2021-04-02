@@ -558,10 +558,11 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                         .addComponent(newItemsButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(itemDescDetailScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(itemsInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(itemsInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(deleteItemsButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(completeOrderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(updateItemsButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(itemsInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(completeOrderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(updateItemsButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -651,11 +652,13 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     }//GEN-LAST:event_newOrderButtonActionPerformed
 
     private void ordersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ordersButtonActionPerformed
+        loadOrderData();
         CardLayout card = (CardLayout)mainPanel.getLayout();
         card.show(mainPanel, "reportTablePanel");
     }//GEN-LAST:event_ordersButtonActionPerformed
 
     private void confirmOrderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmOrderButtonActionPerformed
+        /* All old Testing content
         // grab current order
         Order order = orderHash.get(Integer.parseInt(orderIDText.getText()));
         
@@ -666,7 +669,9 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         String totPrice = new DecimalFormat("$#,###.00").format(order.getTotalPrice());
         Object[] orderData = {order.getOrderID(), order.getTrkNum(), order.getOrderComp(), order.getTotalItem(), totPrice, order.getOrderDate(), order.getStatus()};
         rModel.addRow(orderData);
-     
+        */
+        
+        loadOrderData();
         resetNewOrderGUI();
 
         // Swap back to report table viewpoint
@@ -888,7 +893,6 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 }
 
                 setItemsTable(item.getOrderID());
-                loadOrderData();
                 // </editor-fold>
                 
             } else { 
@@ -953,7 +957,6 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 }
                 
                 setItemsTable(item.getOrderID());
-                loadOrderData();
             }
         }
     }//GEN-LAST:event_updateItemsButtonActionPerformed
@@ -1057,7 +1060,6 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 }
             
             setItemsTable(item.getOrderID());
-            loadOrderData();
             // delete object
             int tempID = item.getID();
             item = null;
@@ -1147,6 +1149,9 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         reportTable.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
         reportTable.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
         reportTable.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
+        
+        // clear current itemHash items to prevent bugs 
+        itemHash.clear();
         
         try {
             // getting connection
