@@ -1,6 +1,7 @@
 import com.formdev.flatlaf.FlatDarkLaf;
 import java.awt.CardLayout;
 import java.awt.Cursor;
+import java.awt.EventQueue;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private HashMap<Integer, Order> orderHash = new HashMap<Integer, Order>();
     private HashMap<Integer, Item> itemHash = new HashMap<Integer, Item>();
     
-    private final static String ROOT_PASSWORD = "Root!420";
+    private final static String ROOT_PASSWORD = "";
     
     private int curOrder;
     
@@ -1115,12 +1116,19 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         }
         //</editor-fold>
         
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new OnlineShoppingSupport().setVisible(true);
-            }
-        });
+        // Create and display user login page
+        EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					LoginPage frame = new LoginPage();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+        
+        
         
         // Load mySQL driver
         try {

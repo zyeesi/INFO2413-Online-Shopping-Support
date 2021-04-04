@@ -1,6 +1,11 @@
 CREATE DATABASE OSSdb;
 USE OSSdb;
 
+CREATE table Users (
+	UserID VARCHAR(10) NOT NULL,
+    UserPassword VARCHAR(20) NOT NULL
+);
+
 CREATE TABLE Orders (
     orderID INT NOT NULL,
     trackingNum VARCHAR(25) NOT NULL,
@@ -27,4 +32,4 @@ CREATE TABLE Order_Items (
     PRIMARY KEY (itemID, orderID)
 );
 
-DROP DATABASE OSSdb;
+/*DROP DATABASE OSSdb;
