@@ -34,7 +34,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private HashMap<Integer, Order> orderHash = new HashMap<Integer, Order>();
     private HashMap<Integer, Item> itemHash = new HashMap<Integer, Item>();
     
-    private final static String ROOT_PASSWORD = "";
+    private final static String ROOT_PASSWORD = "Root!420";
     
     private int curOrder;
     
@@ -984,7 +984,10 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         DefaultTableModel iModel = (DefaultTableModel)itemsTable.getModel();
         
         int rowTotal = iModel.getRowCount();
-        if (rowTotal == 0){
+        if (itemTabIDText.getText().equals("") && rowTotal > 0){
+            JOptionPane.showMessageDialog(this, "Please select an item first! \nAll item must be deleted before an order can be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }else if (rowTotal == 0){
             // Delete Order
             try {
                     Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
@@ -992,8 +995,8 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
 
                     // Delete order
                     String sqlDeleteOrder = 
-                            "DELETE FROM Order WHERE orderID = " + curOrder + ";";
-                    statement.executeQuery(sqlDeleteOrder);
+                            "DELETE FROM Orders WHERE orderID = " + curOrder + ";";
+                    statement.executeUpdate(sqlDeleteOrder);
 
                     statement.close();
                     con.close();
