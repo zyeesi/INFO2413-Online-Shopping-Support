@@ -6,6 +6,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
@@ -21,6 +23,8 @@ public class LoginPage extends JFrame {
 	
 	private final static String ROOT_PASSWORD = "Root!420";
 
+	private static String currentUser;
+	
 	private JPanel contentPane;
 	private JTextField usernameField;
 	private JPasswordField passwordField;
@@ -36,27 +40,41 @@ public class LoginPage extends JFrame {
 		
 		JLabel loginLabel = new JLabel("Login");
 		loginLabel.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		loginLabel.setBounds(173, 11, 165, 46);
+		loginLabel.setBounds(175, 10, 65, 45);
 		contentPane.add(loginLabel);
 		
 		JLabel usernameLabel = new JLabel("Username");
 		usernameLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		usernameLabel.setBounds(68, 78, 90, 24);
+		usernameLabel.setBounds(30, 80, 90, 25);
 		contentPane.add(usernameLabel);
 		
 		JLabel passwordLabel = new JLabel("Password");
 		passwordLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		passwordLabel.setBounds(68, 113, 90, 24);
+		passwordLabel.setBounds(30, 115, 90, 25);
 		contentPane.add(passwordLabel);
 		
 		usernameField = new JTextField();
-		usernameField.setBounds(168, 78, 170, 24);
+		usernameField.setBounds(170, 80, 170, 25);
 		contentPane.add(usernameField);
 		usernameField.setColumns(10);
 		
 		passwordField = new JPasswordField();
-		passwordField.setBounds(168, 113, 170, 24);
+		passwordField.setBounds(170, 115, 170, 25);
 		contentPane.add(passwordField);
+		
+		JCheckBox showPassBox = new JCheckBox("show");
+		showPassBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(showPassBox.isSelected()) {
+					passwordField.setEchoChar((char)0);
+				}
+				else {
+					passwordField.setEchoChar('*');
+				}
+			}
+		});
+		showPassBox.setBounds(346, 116, 97, 23);
+		getContentPane().add(showPassBox);
 		
 		JButton loginButton = new JButton("Login");
 		loginButton.addActionListener(new ActionListener() {
@@ -72,6 +90,7 @@ public class LoginPage extends JFrame {
 						 JOptionPane.showMessageDialog(null, "Login success");
 						 java.awt.EventQueue.invokeLater(new Runnable() {
 					            public void run() {
+					            	currentUser=username;
 					            	setVisible(false);
 					                new OnlineShoppingSupport().setVisible(true);
 					            }
@@ -95,30 +114,35 @@ public class LoginPage extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String username = usernameField.getText();
 				String password = passwordField.getText();
-				if(username.equals("") || password.equals("")) {
-				 	JOptionPane.showMessageDialog(null, "Please fill in all the fields");
-		        }
-				else if (password.length()<8 && password!="") {
-					 JOptionPane.showMessageDialog(null, "Password too short. Atleast 8 digit.");
-			    } 
-				else if(!checkPassword(password)) {
-					 JOptionPane.showMessageDialog(null, "Password requires atleast 1 uppercase, 1 lowcase, and 1 number.");
-				} 
-				else {
-					 try {
-						 Connection con=DriverManager.getConnection("jdbc:mysql://localhost/OSSdb","root", ROOT_PASSWORD);
-						 Statement statement=con.createStatement();
-						 String sqlInsert = "INSERT INTO Users " + 
-								 			"(UserID, UserPassword)" +
-								 			"VALUES ('"+username+"','"+password+"');";
-						 statement.executeUpdate(sqlInsert);
-						 JOptionPane.showMessageDialog(null, "Register success");
-						 con.close();
-						 statement.close();
-					 }catch(Exception ex) {
-						 System.out.print(ex);
+				try {
+					 Connection con=DriverManager.getConnection("jdbc:mysql://localhost/OSSdb","root", ROOT_PASSWORD);
+					 Statement statement=con.createStatement();
+					 String sql="Select * from Users where UserID ='"+username+"'";
+					 ResultSet rs=statement.executeQuery(sql);
+					 if(username.equals("") || password.equals("")) {
+						 JOptionPane.showMessageDialog(null, "Please fill in all the fields");
+				     }
+					 else if (password.length()<8 && password!="") {
+						 JOptionPane.showMessageDialog(null, "Password too short. Atleast 8 digit.");
+					 } 
+					 else if(!checkPassword(password)) {
+						 JOptionPane.showMessageDialog(null, "Password requires atleast 1 uppercase, 1 lowcase, and 1 number.");
 					 }
-				}
+					 else if(rs.next()){
+						 JOptionPane.showMessageDialog(null, "Login name has already been used");
+					 }
+					 else {
+							String sqlInsert = "INSERT INTO Users " + 
+										 			"(UserID, UserPassword)" +
+										 			"VALUES ('"+username+"','"+password+"');";
+								 statement.executeUpdate(sqlInsert);
+								 JOptionPane.showMessageDialog(null, "Register success");
+						}
+					 con.close();
+					 statement.close();
+				 }catch(Exception ex) {
+					 System.out.print(ex);
+				 }
 			}
 		});
 		registerButton.setBounds(43, 182, 89, 23);
@@ -127,11 +151,17 @@ public class LoginPage extends JFrame {
 		JButton resetButton = new JButton("Reset");
 		resetButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				setVisible(false);
+				ResetPage frame = new ResetPage();
+				frame.setVisible(true);
 			}
 		});
 		resetButton.setBounds(315, 182, 89, 23);
 		contentPane.add(resetButton);
+	}
+	
+	public static String username() {
+		return currentUser;
 	}
 	
 	public static boolean checkPassword(String password) {
