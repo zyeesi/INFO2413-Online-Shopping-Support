@@ -39,7 +39,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private HashMap<Integer, Order> orderHash = new HashMap<Integer, Order>();
     private HashMap<Integer, Item> itemHash = new HashMap<Integer, Item>();
     
-    private final static String ROOT_PASSWORD = "";
+    private final static String ROOT_PASSWORD = "Root!420";
     
     private int curOrder;
     
@@ -107,13 +107,13 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         newOrderButton = new javax.swing.JButton();
         logoutButton = new javax.swing.JButton();
         ordersButton = new javax.swing.JButton();
+        reportButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Online Shopping Support");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("icon.png")));
         setLocation(new java.awt.Point(0, 0));
-        setMaximumSize(new java.awt.Dimension(682, 450));
         setMinimumSize(new java.awt.Dimension(682, 450));
         setResizable(false);
 
@@ -609,6 +609,15 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             }
         });
 
+        reportButton.setText("Report");
+        reportButton.setFocusPainted(false);
+        reportButton.setFocusable(false);
+        reportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reportButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -621,7 +630,10 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                         .addComponent(ordersButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(newOrderButton)
+
                         .addComponent(logoutButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(reportButton)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -633,6 +645,8 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                     .addComponent(newOrderButton)
                     .addComponent(logoutButton)
                     .addComponent(ordersButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ordersButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(reportButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
                 .addContainerGap())
@@ -1003,7 +1017,10 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         DefaultTableModel iModel = (DefaultTableModel)itemsTable.getModel();
         
         int rowTotal = iModel.getRowCount();
-        if (rowTotal == 0){
+        if (itemTabIDText.getText().equals("") && rowTotal > 0){
+            JOptionPane.showMessageDialog(this, "Please select an item first! \nAll item must be deleted before an order can be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }else if (rowTotal == 0){
             // Delete Order
             try {
                     Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
@@ -1011,8 +1028,8 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
 
                     // Delete order
                     String sqlDeleteOrder = 
-                            "DELETE FROM Order WHERE orderID = " + curOrder + ";";
-                    statement.executeQuery(sqlDeleteOrder);
+                            "DELETE FROM Orders WHERE orderID = " + curOrder + ";";
+                    statement.executeUpdate(sqlDeleteOrder);
 
                     statement.close();
                     con.close();
@@ -1125,6 +1142,16 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         CardLayout card = (CardLayout)mainPanel.getLayout();
         card.show(mainPanel, "reportTablePanel");
     }//GEN-LAST:event_completeOrderButtonActionPerformed
+
+    private void reportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportButtonActionPerformed
+        // 
+        // Add a month hashmap or enum
+        // months(04; "April"),
+        // date format = "yyyy-MM-dd"
+        // Date date = new Date(orderDate)
+        // int month = Integer.parseInt(date.toString("MM")
+        // msgbox: In months.get(month) you spent a total of orderSum etc etc
+    }//GEN-LAST:event_reportButtonActionPerformed
 
     public static void main(String args[]) {
         //<editor-fold defaultstate="collapsed" desc="Look and feel setting">
@@ -1406,10 +1433,18 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         try {
             int itemQuant = Integer.parseInt(itemQuantityText.getText());
             double itemPrice = Double.parseDouble(itemPriceText.getText());
+            if (itemQuant <= 0){
+                JOptionPane.showMessageDialog(this,"Please enter a valid amount of items!", "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            if (itemPrice < 0){
+                JOptionPane.showMessageDialog(this,"Please enter a valid price!", "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
             return true;
         } catch (Exception ex) {
             System.err.println(ex);
-            JOptionPane.showMessageDialog(this,"Please enter all required fields!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,"Please enter all required fields with valid value!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -1418,21 +1453,31 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         Item item = itemHash.get(Integer.parseInt(itemTabIDText.getText()));
         try {
             int itemQuant = Integer.parseInt(itemTabQuantText.getText());
+            double itemPrice = -1;
+            if (itemQuant <= 0){
+                JOptionPane.showMessageDialog(this,"Please enter a valid amount of items!", "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
             // if item exist based on itemID
             if (item != null){
                 // if the string is the same as format, then ignore, else check if double
                 String setPrice = new DecimalFormat("$#,###.00").format(item.getPrice());
                 if (!itemTabPriceText.getText().equals(setPrice)){
-                    double itemPrice = Double.parseDouble(itemTabPriceText.getText());
+                    itemPrice = Double.parseDouble(itemTabPriceText.getText());
                 }
             } else {
-                double itemPrice = Double.parseDouble(itemTabPriceText.getText());
+                itemPrice = Double.parseDouble(itemTabPriceText.getText());
             }
             if (itemTabNameText.getText().equals("")){
                 System.err.println("empty String");
                 JOptionPane.showMessageDialog(this,"Please enter all required fields!", "Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
+            if (itemPrice < 0){
+                JOptionPane.showMessageDialog(this,"Please enter a valid price!", "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            
             return true;
         }catch (Exception ex){
             JOptionPane.showMessageDialog(this,"Please enter all required fields with valid value!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1486,6 +1531,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private javax.swing.JTextField orderIDText;
     private javax.swing.JButton ordersButton;
     private javax.swing.JScrollPane reporTableScrollPane;
+    private javax.swing.JButton reportButton;
     private javax.swing.JTable reportTable;
     private javax.swing.JTextField totalItemsText;
     private javax.swing.JTextField totalPriceText;
