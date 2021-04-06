@@ -19,7 +19,7 @@ import java.sql.*;
 
 public class LoginPage extends JFrame {
 	
-	private final static String ROOT_PASSWORD = "";
+	private final static String ROOT_PASSWORD = "KLj28032~";
 
 	private JPanel contentPane;
 	private JTextField usernameField;
@@ -95,30 +95,35 @@ public class LoginPage extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String username = usernameField.getText();
 				String password = passwordField.getText();
-				if(username.equals("") || password.equals("")) {
-				 	JOptionPane.showMessageDialog(null, "Please fill in all the fields");
-		        }
-				else if (password.length()<8 && password!="") {
-					 JOptionPane.showMessageDialog(null, "Password too short. Atleast 8 digit.");
-			    } 
-				else if(!checkPassword(password)) {
-					 JOptionPane.showMessageDialog(null, "Password requires atleast 1 uppercase, 1 lowcase, and 1 number.");
-				} 
-				else {
-					 try {
-						 Connection con=DriverManager.getConnection("jdbc:mysql://localhost/OSSdb","root", ROOT_PASSWORD);
-						 Statement statement=con.createStatement();
-						 String sqlInsert = "INSERT INTO Users " + 
-								 			"(UserID, UserPassword)" +
-								 			"VALUES ('"+username+"','"+password+"');";
-						 statement.executeUpdate(sqlInsert);
-						 JOptionPane.showMessageDialog(null, "Register success");
-						 con.close();
-						 statement.close();
-					 }catch(Exception ex) {
-						 System.out.print(ex);
+				try {
+					 Connection con=DriverManager.getConnection("jdbc:mysql://localhost/OSSdb","root", ROOT_PASSWORD);
+					 Statement statement=con.createStatement();
+					 String sql="Select * from Users where UserID ='"+username+"'";
+					 ResultSet rs=statement.executeQuery(sql);
+					 if(username.equals("") || password.equals("")) {
+						 JOptionPane.showMessageDialog(null, "Please fill in all the fields");
+				     }
+					 else if (password.length()<8 && password!="") {
+						 JOptionPane.showMessageDialog(null, "Password too short. Atleast 8 digit.");
+					 } 
+					 else if(!checkPassword(password)) {
+						 JOptionPane.showMessageDialog(null, "Password requires atleast 1 uppercase, 1 lowcase, and 1 number.");
 					 }
-				}
+					 else if(rs.next()){
+						 JOptionPane.showMessageDialog(null, "Login name has already been used");
+					 }
+					 else {
+							String sqlInsert = "INSERT INTO Users " + 
+										 			"(UserID, UserPassword)" +
+										 			"VALUES ('"+username+"','"+password+"');";
+								 statement.executeUpdate(sqlInsert);
+								 JOptionPane.showMessageDialog(null, "Register success");
+						}
+					 con.close();
+					 statement.close();
+				 }catch(Exception ex) {
+					 System.out.print(ex);
+				 }
 			}
 		});
 		registerButton.setBounds(43, 182, 89, 23);

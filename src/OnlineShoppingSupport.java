@@ -34,7 +34,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private HashMap<Integer, Order> orderHash = new HashMap<Integer, Order>();
     private HashMap<Integer, Item> itemHash = new HashMap<Integer, Item>();
     
-    private final static String ROOT_PASSWORD = "";
+    private final static String ROOT_PASSWORD = "KLj28032~";
     
     private int curOrder;
     

@@ -19,7 +19,7 @@ public class Order {
     private boolean orderStatus;
     private int itemID; // key
     
-    private final static String ROOT_PASSWORD = "";
+    private final static String ROOT_PASSWORD = "KLj28032~";
     
     // newOrder with 0 items
     public Order (String trackingNum, String orderCompany){
