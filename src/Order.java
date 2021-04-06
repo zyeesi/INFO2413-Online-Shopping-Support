@@ -76,6 +76,7 @@ public class Order {
     }
     */
     
+    // Order with just items
     public Order (int ordID){
         this.orderID = ordID;
     }

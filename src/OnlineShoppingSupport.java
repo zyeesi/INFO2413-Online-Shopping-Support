@@ -4,13 +4,8 @@ import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
-
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.SwingConstants;
@@ -105,9 +100,9 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         deleteItemsButton = new javax.swing.JButton();
         completeOrderButton = new javax.swing.JButton();
         newOrderButton = new javax.swing.JButton();
-        logoutButton = new javax.swing.JButton();
         ordersButton = new javax.swing.JButton();
         reportButton = new javax.swing.JButton();
+        logoutButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Online Shopping Support");
@@ -173,7 +168,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             reportTable.getColumnModel().getColumn(6).setResizable(false);
             reportTable.getColumnModel().getColumn(6).setPreferredWidth(25);
         }
-        
+
         mainPanel.add(reporTableScrollPane, "reportTablePanel");
 
         jLabel1.setText("Order ID:");
@@ -585,17 +580,6 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 newOrderButtonActionPerformed(evt);
             }
         });
-        
-        logoutButton.setText("Logout");
-        logoutButton.setFocusPainted(false);
-        logoutButton.setFocusable(false);
-        logoutButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-            	setVisible(false);
-                LoginPage frame = new LoginPage();
-                frame.setVisible(true);
-            }
-        });
 
         ordersButton.setText("Orders");
         ordersButton.setFocusPainted(false);
@@ -612,9 +596,24 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         reportButton.setText("Report");
         reportButton.setFocusPainted(false);
         reportButton.setFocusable(false);
+        reportButton.setMaximumSize(new java.awt.Dimension(87, 22));
+        reportButton.setMinimumSize(new java.awt.Dimension(87, 22));
+        reportButton.setPreferredSize(new java.awt.Dimension(87, 22));
         reportButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 reportButtonActionPerformed(evt);
+            }
+        });
+
+        logoutButton.setText("Logout");
+        logoutButton.setFocusPainted(false);
+        logoutButton.setFocusable(false);
+        logoutButton.setMaximumSize(new java.awt.Dimension(87, 22));
+        logoutButton.setMinimumSize(new java.awt.Dimension(87, 22));
+        logoutButton.setPreferredSize(new java.awt.Dimension(87, 22));
+        logoutButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutButtonActionPerformed(evt);
             }
         });
 
@@ -630,11 +629,10 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                         .addComponent(ordersButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(newOrderButton)
-
-                        .addComponent(logoutButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(reportButton)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(reportButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -643,10 +641,9 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 .addGap(107, 107, 107)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(newOrderButton)
-                    .addComponent(logoutButton)
-                    .addComponent(ordersButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(ordersButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(reportButton))
+                    .addComponent(reportButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
                 .addContainerGap())
@@ -1153,6 +1150,12 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         // msgbox: In months.get(month) you spent a total of orderSum etc etc
     }//GEN-LAST:event_reportButtonActionPerformed
 
+    private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
+        setVisible(false);
+        LoginPage frame = new LoginPage();
+        frame.setVisible(true);
+    }//GEN-LAST:event_logoutButtonActionPerformed
+
     public static void main(String args[]) {
         //<editor-fold defaultstate="collapsed" desc="Look and feel setting">
         try {
@@ -1164,15 +1167,15 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         
         // Create and display user login page
         EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					LoginPage frame = new LoginPage();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+            public void run() {
+                try {
+                LoginPage frame = new LoginPage();
+                frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    });
         
         
         
@@ -1214,7 +1217,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             // setting statement query
             Statement statement = con.createStatement();
             String sqlSelect = 
-                    "SELECT * FROM Orders WHERE userID = '"+LoginPage.username()+"';";
+                    "SELECT * FROM Orders WHERE userID = '" + LoginPage.username()+ "';";
             
             ResultSet rs = statement.executeQuery(sqlSelect);
             while (rs.next()){
@@ -1359,7 +1362,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         itemQuantityText.setEnabled(false);
         itemPriceText.setEnabled(false);
         itemIDText.setText("");
-        itemDescText.setText("");
+        itemDescText.setEnabled(false);
         addItemButton.setEnabled(false);
         addOrderButton.setEnabled(true);
         confirmOrderButton.setEnabled(false);
@@ -1522,10 +1525,10 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JButton logoutButton;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JButton newItemsButton;
     private javax.swing.JButton newOrderButton;
-    private javax.swing.JButton logoutButton;
     private javax.swing.JPanel newOrderPanel;
     private javax.swing.JTextField orderCompanyText;
     private javax.swing.JTextField orderIDText;
