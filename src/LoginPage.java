@@ -19,7 +19,7 @@ import java.sql.*;
 
 public class LoginPage extends JFrame {
 	
-	private final static String ROOT_PASSWORD = "KLj28032~";
+	private final static String ROOT_PASSWORD = "";
 
 	private JPanel contentPane;
 	private JTextField usernameField;
