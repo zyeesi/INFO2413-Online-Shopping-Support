@@ -23,6 +23,8 @@ public class LoginPage extends JFrame {
 	
 	private final static String ROOT_PASSWORD = "";
 
+	private static String currentUser;
+	
 	private JPanel contentPane;
 	private JTextField usernameField;
 	private JPasswordField passwordField;
@@ -88,6 +90,7 @@ public class LoginPage extends JFrame {
 						 JOptionPane.showMessageDialog(null, "Login success");
 						 java.awt.EventQueue.invokeLater(new Runnable() {
 					            public void run() {
+					            	currentUser=username;
 					            	setVisible(false);
 					                new OnlineShoppingSupport().setVisible(true);
 					            }
@@ -155,6 +158,10 @@ public class LoginPage extends JFrame {
 		});
 		resetButton.setBounds(315, 182, 89, 23);
 		contentPane.add(resetButton);
+	}
+	
+	public static String username() {
+		return currentUser;
 	}
 	
 	public static boolean checkPassword(String password) {

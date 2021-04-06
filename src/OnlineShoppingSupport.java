@@ -4,8 +4,13 @@ import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
+
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.SwingConstants;
@@ -100,6 +105,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         deleteItemsButton = new javax.swing.JButton();
         completeOrderButton = new javax.swing.JButton();
         newOrderButton = new javax.swing.JButton();
+        logoutButton = new javax.swing.JButton();
         ordersButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -167,7 +173,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             reportTable.getColumnModel().getColumn(6).setResizable(false);
             reportTable.getColumnModel().getColumn(6).setPreferredWidth(25);
         }
-
+        
         mainPanel.add(reporTableScrollPane, "reportTablePanel");
 
         jLabel1.setText("Order ID:");
@@ -579,6 +585,17 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 newOrderButtonActionPerformed(evt);
             }
         });
+        
+        logoutButton.setText("Logout");
+        logoutButton.setFocusPainted(false);
+        logoutButton.setFocusable(false);
+        logoutButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            	setVisible(false);
+                LoginPage frame = new LoginPage();
+                frame.setVisible(true);
+            }
+        });
 
         ordersButton.setText("Orders");
         ordersButton.setFocusPainted(false);
@@ -604,6 +621,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                         .addComponent(ordersButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(newOrderButton)
+                        .addComponent(logoutButton)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -613,6 +631,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 .addGap(107, 107, 107)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(newOrderButton)
+                    .addComponent(logoutButton)
                     .addComponent(ordersButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
@@ -651,7 +670,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         CardLayout card = (CardLayout)mainPanel.getLayout();
         card.show(mainPanel, "newOrderPanel");
     }//GEN-LAST:event_newOrderButtonActionPerformed
-
+    
     private void ordersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ordersButtonActionPerformed
         loadOrderData();
         CardLayout card = (CardLayout)mainPanel.getLayout();
@@ -697,8 +716,8 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 // Insert data into order table
                 String sqlInsert = 
                         "INSERT INTO Orders" +
-                        "(orderID, trackingNum, orderDate, orderPrice, orderTotalItems, orderCompany, orderStatus)" +
-                        "VALUES (" + newOrder.getOrderID() + ", '" + newOrder.getTrkNum() + "', '" + newOrder.getOrderDate() + "', " + 
+                        "(userID, orderID, trackingNum, orderDate, orderPrice, orderTotalItems, orderCompany, orderStatus)" +
+                        "VALUES ('"+LoginPage.username()+"', "+ newOrder.getOrderID() + ", '" + newOrder.getTrkNum() + "', '" + newOrder.getOrderDate() + "', " + 
                         newOrder.getTotalPrice() + ", " + newOrder.getTotalItem() + ", '" + newOrder.getOrderComp() + 
                         "', " + newOrder.getStatus() + ");";
                
@@ -1168,7 +1187,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             // setting statement query
             Statement statement = con.createStatement();
             String sqlSelect = 
-                    "SELECT * FROM Orders;";
+                    "SELECT * FROM Orders WHERE userID = '"+LoginPage.username()+"';";
             
             ResultSet rs = statement.executeQuery(sqlSelect);
             while (rs.next()){
@@ -1461,6 +1480,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private javax.swing.JPanel mainPanel;
     private javax.swing.JButton newItemsButton;
     private javax.swing.JButton newOrderButton;
+    private javax.swing.JButton logoutButton;
     private javax.swing.JPanel newOrderPanel;
     private javax.swing.JTextField orderCompanyText;
     private javax.swing.JTextField orderIDText;

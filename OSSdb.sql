@@ -3,10 +3,12 @@ USE OSSdb;
 
 CREATE table Users (
 	UserID VARCHAR(10) NOT NULL,
-    UserPassword VARCHAR(20) NOT NULL
+    UserPassword VARCHAR(20) NOT NULL,
+    PRIMARY KEY (UserID)
 );
 
 CREATE TABLE Orders (
+	userID VARCHAR(10) NOT NULL,
     orderID INT NOT NULL,
     trackingNum VARCHAR(25) NOT NULL,
     orderDate DATE NOT NULL,
@@ -14,7 +16,11 @@ CREATE TABLE Orders (
     orderTotalItems INT NOT NULL,
     orderCompany VARCHAR(25) NOT NULL,
     orderStatus BOOL NOT NULL,
-    PRIMARY KEY (orderID)
+    FOREIGN KEY (UserID)
+		REFERENCES Users (UserID)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    PRIMARY KEY (orderID, UserID)
 );
 
 CREATE TABLE Order_Items (
@@ -32,4 +38,4 @@ CREATE TABLE Order_Items (
     PRIMARY KEY (itemID, orderID)
 );
 
-/*DROP DATABASE OSSdb;
+DROP DATABASE OSSdb;
