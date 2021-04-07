@@ -16,6 +16,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
@@ -1141,13 +1145,67 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     }//GEN-LAST:event_completeOrderButtonActionPerformed
 
     private void reportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportButtonActionPerformed
-        // 
-        // Add a month hashmap or enum
-        // months(04; "April"),
+        // Select which month you want to display
+        // ^ We've ran out of time for this function ^
         // date format = "yyyy-MM-dd"
         // Date date = new Date(orderDate)
         // int month = Integer.parseInt(date.toString("MM")
         // msgbox: In months.get(month) you spent a total of orderSum etc etc
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH);
+        Month curMonth = LocalDate.now().getMonth();
+        String curMonthFormat = curMonth.toString().toLowerCase();
+        String curMonthString = curMonthFormat.substring(0, 1).toUpperCase() + curMonthFormat.substring(1);
+        int monthOrder = 0;
+        int monthItem = 0;
+        double monthPrice = 0;
+        int monthCompleted = 0;
+        try {
+            // getting connection
+            Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
+            
+            // setting statement query
+            Statement statement = con.createStatement();
+            String sqlSelect = 
+                    "SELECT orderDate, orderPrice, orderTotalItems, orderStatus FROM Orders WHERE userID = '" + LoginPage.username()+ "';";
+            
+            ResultSet rs = statement.executeQuery(sqlSelect);
+            while (rs.next()){
+                int totItem = rs.getInt("orderTotalItems");
+                double totPrice = rs.getDouble("orderPrice");
+                String orderDate = rs.getString("orderDate");
+                boolean orderStatus = rs.getBoolean("orderStatus");
+                
+                LocalDate monthDate = LocalDate.parse(orderDate, formatter);
+                if (monthDate.getMonth() == curMonth){
+                    monthOrder++;
+                    monthItem += totItem;
+                    monthPrice += totPrice;
+                    if (orderStatus){
+                        monthCompleted++;
+                    }
+                }
+            }
+            
+            // closing connections
+            statement.close();
+            con.close();
+        } catch (SQLException ex){
+            System.err.println(ex);
+        }
+        
+        if (monthOrder == 0){
+            JOptionPane.showMessageDialog(this, "You have not made a single order this month!", "Report", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            String monthPriceFormat = new DecimalFormat("$#,###.00").format(monthPrice);
+            JOptionPane.showMessageDialog(this, 
+                    "In " + curMonthString + ": \n" +
+                    "Number of Orders: " + monthOrder + "\n" +
+                    "Number of Items: " + monthItem + "\n" +
+                    "Total spending: " + monthPriceFormat + "\n" +
+                    "Orders completed: " + monthCompleted
+                    , "Report", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_reportButtonActionPerformed
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
