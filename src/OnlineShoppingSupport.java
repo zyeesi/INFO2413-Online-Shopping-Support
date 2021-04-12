@@ -1525,6 +1525,9 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 String setPrice = new DecimalFormat("$#,###.00").format(item.getPrice());
                 if (!itemTabPriceText.getText().equals(setPrice)){
                     itemPrice = Double.parseDouble(itemTabPriceText.getText());
+                } else {
+                    // set this to 1 so format check would pass, this variable isn't passed anywhere.
+                    itemPrice = 1;
                 }
             } else {
                 itemPrice = Double.parseDouble(itemTabPriceText.getText());
