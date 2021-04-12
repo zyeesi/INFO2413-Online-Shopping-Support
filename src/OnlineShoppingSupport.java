@@ -701,7 +701,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         // grab table model
         DefaultTableModel rModel = (DefaultTableModel)reportTable.getModel();
         // set data
-        String totPrice = new DecimalFormat("$#,###.00").format(order.getTotalPrice());
+        String totPrice = new DecimalFormat("$#,##0.00").format(order.getTotalPrice());
         Object[] orderData = {order.getOrderID(), order.getTrkNum(), order.getOrderComp(), order.getTotalItem(), totPrice, order.getOrderDate(), order.getStatus()};
         rModel.addRow(orderData);
         */
@@ -799,7 +799,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 confirmOrderButton.setEnabled (true);
                 itemIDText.setText(Integer.toString(order.getItemID()));
                 totalItemsText.setText(Integer.toString(order.getTotalItem()));
-                totalPriceText.setText(new DecimalFormat("$#,###.00").format(order.getTotalPrice()));
+                totalPriceText.setText(new DecimalFormat("$#,##0.00").format(order.getTotalPrice()));
                 
             } catch (SQLException ex){
                 System.err.println(ex);
@@ -827,7 +827,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             itemTabIDText.setText(Integer.toString(item.getID()));
             itemTabNameText.setText(item.getName());
             itemTabQuantText.setText(Integer.toString(item.getQuantity()));
-            itemTabPriceText.setText(new DecimalFormat("$#,###.00").format(item.getPrice()));
+            itemTabPriceText.setText(new DecimalFormat("$#,##0.00").format(item.getPrice()));
             itemDescDetailText.setText(item.getDesc());
         }
     }//GEN-LAST:event_itemsTableMouseClicked
@@ -875,7 +875,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 item.setName(itemTabNameText.getText());
                 item.setQuantity(Integer.parseInt(itemTabQuantText.getText()));
                 // Converting makes everything annoying to deal with.
-                String compPrice = new DecimalFormat("$#,###.00").format(item.getPrice());
+                String compPrice = new DecimalFormat("$#,##0.00").format(item.getPrice());
                 if (!itemTabPriceText.getText().equals(compPrice)){
                     item.setPrice(Double.parseDouble(itemTabPriceText.getText()));
                 }
@@ -1197,7 +1197,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         if (monthOrder == 0){
             JOptionPane.showMessageDialog(this, "You have not made a single order this month!", "Report", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            String monthPriceFormat = new DecimalFormat("$#,###.00").format(monthPrice);
+            String monthPriceFormat = new DecimalFormat("$#,##0.00").format(monthPrice);
             JOptionPane.showMessageDialog(this, 
                     "In " + curMonthString + ": \n" +
                     "Number of Orders: " + monthOrder + "\n" +
@@ -1283,7 +1283,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 String trkNum = rs.getString("trackingNum");
                 String orderComp = rs.getString("orderCompany");
                 int totItem = rs.getInt("orderTotalItems");
-                String totPrice = new DecimalFormat("$#,###.00").format(rs.getDouble("orderPrice"));
+                String totPrice = new DecimalFormat("$#,##0.00").format(rs.getDouble("orderPrice"));
                 String orderDate = rs.getString("orderDate");
                 boolean orderStatus = rs.getBoolean("orderStatus");
                 
@@ -1359,7 +1359,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                 
                 int itemID = itemsRS.getInt("itemID");
                 String itemName = itemsRS.getString("itemName");
-                String itemPriceFormat = new DecimalFormat("$#,###.00").format(itemsRS.getDouble("itemPrice"));
+                String itemPriceFormat = new DecimalFormat("$#,##0.00").format(itemsRS.getDouble("itemPrice"));
                 double itemPrice = itemsRS.getDouble("itemPrice");
                 int itemQuant = itemsRS.getInt("itemQuantity");
                 String itemDesc = itemsRS.getString(("itemDescription"));
@@ -1379,7 +1379,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             ResultSet orderRS = statement.executeQuery(sqlOrderSelect);
             if (orderRS.next()){
                 itemOrderItemsText.setText(Integer.toString(orderRS.getInt("orderTotalItems")));
-                itemOrderPriceText.setText(new DecimalFormat("$#,###.00").format(orderRS.getDouble("orderPrice")));
+                itemOrderPriceText.setText(new DecimalFormat("$#,##0.00").format(orderRS.getDouble("orderPrice")));
             }
             */
             
@@ -1522,7 +1522,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             // if item exist based on itemID
             if (item != null){
                 // if the string is the same as format, then ignore, else check if double
-                String setPrice = new DecimalFormat("$#,###.00").format(item.getPrice());
+                String setPrice = new DecimalFormat("$#,##0.00").format(item.getPrice());
                 if (!itemTabPriceText.getText().equals(setPrice)){
                     itemPrice = Double.parseDouble(itemTabPriceText.getText());
                 } else {
