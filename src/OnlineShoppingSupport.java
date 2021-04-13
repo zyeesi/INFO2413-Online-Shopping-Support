@@ -107,6 +107,9 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         ordersButton = new javax.swing.JButton();
         reportButton = new javax.swing.JButton();
         logoutButton = new javax.swing.JButton();
+        searchText = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        searchButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Online Shopping Support");
@@ -119,6 +122,8 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         mainPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         mainPanel.setPreferredSize(new java.awt.Dimension(670, 300));
         mainPanel.setLayout(new java.awt.CardLayout());
+
+        reporTableScrollPane.setFocusable(false);
 
         reportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -621,6 +626,22 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
             }
         });
 
+        searchText.setPreferredSize(new java.awt.Dimension(150, 22));
+
+        jLabel16.setText("Search:");
+
+        searchButton.setText("Search");
+        searchButton.setFocusPainted(false);
+        searchButton.setFocusable(false);
+        searchButton.setMaximumSize(new java.awt.Dimension(87, 22));
+        searchButton.setMinimumSize(new java.awt.Dimension(87, 22));
+        searchButton.setPreferredSize(new java.awt.Dimension(87, 22));
+        searchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -635,7 +656,13 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                         .addComponent(newOrderButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(reportButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel16)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(searchText, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -647,7 +674,10 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
                     .addComponent(newOrderButton)
                     .addComponent(ordersButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(reportButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel16)
+                    .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
                 .addContainerGap())
@@ -1214,6 +1244,152 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         frame.setVisible(true);
     }//GEN-LAST:event_logoutButtonActionPerformed
 
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+        if (searchText.getText().equals("")){
+            JOptionPane.showMessageDialog(this, "Please enter a search entry!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // grab table model
+        DefaultTableModel rModel = (DefaultTableModel)reportTable.getModel();
+        // remove previous data
+        int previousRows = rModel.getRowCount();
+        if (previousRows > 0){
+            for (int i = previousRows - 1; i >= 0; i--){
+                rModel.removeRow(i);
+            }
+        }
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+        reportTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        reportTable.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        reportTable.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+        reportTable.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
+        
+        switch (searchSwitch()){
+            case 1:
+                int searchOrderID = Integer.parseInt(searchText.getText());
+                
+                // clear current itemHash items to prevent bugs 
+                itemHash.clear();
+
+                try {
+                    // getting connection
+                    Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
+
+                    // setting statement query
+                    Statement statement = con.createStatement();
+                    String sqlSelect = 
+                            "SELECT * FROM Orders WHERE orderID = " + searchOrderID + " AND userID = '" + LoginPage.username()+ "';";
+
+                    ResultSet rs = statement.executeQuery(sqlSelect);
+                    while (rs.next()){
+                        int orderID = rs.getInt("orderID");
+                        String trkNum = rs.getString("trackingNum");
+                        String orderComp = rs.getString("orderCompany");
+                        int totItem = rs.getInt("orderTotalItems");
+                        String totPrice = new DecimalFormat("$#,##0.00").format(rs.getDouble("orderPrice"));
+                        String orderDate = rs.getString("orderDate");
+                        boolean orderStatus = rs.getBoolean("orderStatus");
+
+                        Object[] mySQLOrders = {orderID, trkNum, orderComp, totItem, totPrice, orderDate, orderStatus};
+                        rModel.addRow(mySQLOrders);
+                    }
+
+                    // closing connections
+                    statement.close();
+                    con.close();
+                } catch (SQLException ex){
+                    System.err.println(ex);
+                }
+            break;
+            
+            case 2:
+                boolean status;
+                
+                // clear current itemHash items to prevent bugs 
+                itemHash.clear();
+                
+                if (searchText.getText().toLowerCase().equals("completed")){
+                    status = true;
+                } else {
+                    status = false;
+                }
+
+                try {
+                    // getting connection
+                    Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
+
+                    // setting statement query
+                    Statement statement = con.createStatement();
+                    String sqlSelect = 
+                            "SELECT * FROM Orders WHERE orderStatus = " + status + " AND userID = '" + LoginPage.username()+ "';";
+
+                    ResultSet rs = statement.executeQuery(sqlSelect);
+                    while (rs.next()){
+                        int orderID = rs.getInt("orderID");
+                        String trkNum = rs.getString("trackingNum");
+                        String orderComp = rs.getString("orderCompany");
+                        int totItem = rs.getInt("orderTotalItems");
+                        String totPrice = new DecimalFormat("$#,##0.00").format(rs.getDouble("orderPrice"));
+                        String orderDate = rs.getString("orderDate");
+                        boolean orderStatus = rs.getBoolean("orderStatus");
+
+                        Object[] mySQLOrders = {orderID, trkNum, orderComp, totItem, totPrice, orderDate, orderStatus};
+                        rModel.addRow(mySQLOrders);
+                    }
+
+                    // closing connections
+                    statement.close();
+                    con.close();
+                } catch (SQLException ex){
+                    System.err.println(ex);
+                }
+                break;
+            case 3:
+            
+                // clear current itemHash items to prevent bugs 
+                itemHash.clear();
+
+                try {
+                    // getting connection
+                    Connection con = DriverManager.getConnection ("jdbc:mysql://localhost/OSSdb", "root", ROOT_PASSWORD);
+
+                    // setting statement query
+                    Statement statement = con.createStatement();
+                    String sqlSelect = 
+                            "SELECT * FROM Orders WHERE orderCompany = '" + searchText.getText() + "' AND userID = '" + LoginPage.username()+ "';";
+
+                    ResultSet rs = statement.executeQuery(sqlSelect);
+                    while (rs.next()){
+                        int orderID = rs.getInt("orderID");
+                        String trkNum = rs.getString("trackingNum");
+                        String orderComp = rs.getString("orderCompany");
+                        int totItem = rs.getInt("orderTotalItems");
+                        String totPrice = new DecimalFormat("$#,##0.00").format(rs.getDouble("orderPrice"));
+                        String orderDate = rs.getString("orderDate");
+                        boolean orderStatus = rs.getBoolean("orderStatus");
+
+                        Object[] mySQLOrders = {orderID, trkNum, orderComp, totItem, totPrice, orderDate, orderStatus};
+                        rModel.addRow(mySQLOrders);
+                    }
+
+                    // closing connections
+                    statement.close();
+                    con.close();
+                } catch (SQLException ex){
+                    System.err.println(ex);
+                }
+            break;
+            default:
+                System.err.println("Something went wrong");
+            break;
+        }
+    }//GEN-LAST:event_searchButtonActionPerformed
+
     public static void main(String args[]) {
         //<editor-fold defaultstate="collapsed" desc="Look and feel setting">
         try {
@@ -1245,8 +1421,27 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
         }
     }
     
+    private int searchSwitch(){
+        if (isSearchInt()){
+            return 1;
+        }else if (searchText.getText().toLowerCase().equals("completed") || searchText.getText().toLowerCase().equals("uncompleted")){
+            return 2;
+        }
+        
+        return 3;
+    }
+    
+    private boolean isSearchInt(){
+        try {
+            Integer.parseInt(searchText.getText());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
     private void loadOrderData(){
-         // grab table model
+        // grab table model
         DefaultTableModel rModel = (DefaultTableModel)reportTable.getModel();
         // remove previous data
         int previousRows = rModel.getRowCount();
@@ -1578,6 +1773,7 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1597,6 +1793,8 @@ public class OnlineShoppingSupport extends javax.swing.JFrame {
     private javax.swing.JScrollPane reporTableScrollPane;
     private javax.swing.JButton reportButton;
     private javax.swing.JTable reportTable;
+    private javax.swing.JButton searchButton;
+    private javax.swing.JTextField searchText;
     private javax.swing.JTextField totalItemsText;
     private javax.swing.JTextField totalPriceText;
     private javax.swing.JTextField trackingNumText;
